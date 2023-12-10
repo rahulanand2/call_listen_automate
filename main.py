@@ -12,7 +12,7 @@ qa_handler = QuestionAnsweringHandler()
 price_extractor = PriceInfoExtractor()
 
 # Process an audio file
-audio_path = r"C:\Users\rishu\Documents\Call_listening\InboundSampleRecording.wav"
+audio_path = r"/InboundSampleRecording.wav"
 script = audio_handler.transcribe(audio_path)
 diarized = audio_handler.diarize(audio_path)
 script_aligned = alignment_formatter.align_transcript(script, audio_path, diarized)
