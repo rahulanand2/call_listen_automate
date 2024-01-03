@@ -54,14 +54,19 @@ class TranscriptAlignmentFormatter:
                 }
             )
         return transcribed
-
     @staticmethod
-    def format_conversation(transcript_list):
+    def format_time(seconds):
+        minutes = int(seconds // 60)
+        seconds = int(seconds % 60)
+        return f"{minutes:02d}:{seconds:02d}"
+
+    def format_conversation(self, transcript_list, include_timestamps=True):
         """
         Formats the aligned conversation transcript for readability.
 
         Args:
             transcript_list (list): A list of transcript segments with speaker information.
+            include_timestamps (bool): Flag to include timestamps in the formatted string.
 
         Returns:
             str: A formatted string representing the conversation.
@@ -69,16 +74,58 @@ class TranscriptAlignmentFormatter:
         formatted_conversation = ""
         current_speaker = None
         current_text = ""
+        start_time = None
+
         for entry in transcript_list:
             speaker = entry.get('speaker', 'Unknown Speaker')
             text = entry.get('text', '').strip()
+            start = entry.get('start')
+            end = entry.get('end')
+
             if speaker != current_speaker:
                 if current_speaker is not None:
-                    formatted_conversation += f"{current_speaker}: '{current_text.strip()}'\n"
+                    if include_timestamps:
+                        formatted_conversation += f"{current_speaker} [{self.format_time(start_time)} - {self.format_time(end)}]: '{current_text.strip()}'\n"
+                    else:
+                        formatted_conversation += f"{current_speaker}: '{current_text.strip()}'\n"
                 current_text = text
                 current_speaker = speaker
+                start_time = start
             else:
                 current_text += ' ' + text
+
         if current_speaker is not None:
-            formatted_conversation += f"{current_speaker}: '{current_text.strip()}'"
+            if include_timestamps:
+                formatted_conversation += f"{current_speaker} [{self.format_time(start_time)} - {self.format_time(end)}]: '{current_text.strip()}'"
+            else:
+                formatted_conversation += f"{current_speaker}: '{current_text.strip()}'"
+
         return formatted_conversation
+
+    # @staticmethod
+    # def format_conversation(transcript_list):
+    #     """
+    #     Formats the aligned conversation transcript for readability.
+    #
+    #     Args:
+    #         transcript_list (list): A list of transcript segments with speaker information.
+    #
+    #     Returns:
+    #         str: A formatted string representing the conversation.
+    #     """
+    #     formatted_conversation = ""
+    #     current_speaker = None
+    #     current_text = ""
+    #     for entry in transcript_list:
+    #         speaker = entry.get('speaker', 'Unknown Speaker')
+    #         text = entry.get('text', '').strip()
+    #         if speaker != current_speaker:
+    #             if current_speaker is not None:
+    #                 formatted_conversation += f"{current_speaker}: '{current_text.strip()}'\n"
+    #             current_text = text
+    #             current_speaker = speaker
+    #         else:
+    #             current_text += ' ' + text
+    #     if current_speaker is not None:
+    #         formatted_conversation += f"{current_speaker}: '{current_text.strip()}'"
+    #     return formatted_conversation

@@ -23,6 +23,8 @@ class PriceInfoExtractor:
                     [{"LOWER": "pay"}]]
         self.matcher.add("PriceDiscountPatterns", patterns)
 
+#TODO
+    # for extract price info implement the logic to take plain transcripts as input without speaker labels
     def extract_price_related_info(self, text):
         """
         Extracts price-related conversations from the given text.
